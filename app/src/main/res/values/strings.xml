@@ -9,4 +9,6 @@
     <string name="delete">Delete</string>
     <string name="name">Name</string>
     <string name="add">Add</string>
+    <string name="tile_label">Tile title</string>
+    <string name="tile_description">Tile description</string>
 </resources>

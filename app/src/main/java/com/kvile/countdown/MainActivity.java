@@ -1,5 +1,6 @@
 package com.kvile.countdown;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,11 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.activity.ComponentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.wear.tiles.manager.TileUiClient;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,16 +32,30 @@ public class MainActivity extends ComponentActivity {
     private CountdownsAdapter adapter;
     private View previousClickedView;
     private int currentView;
+    private TileUiClient mTileUiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         changeContentView(R.layout.activity_main);
+        FrameLayout rootLayout = findViewById(R.id.parent);
+        mTileUiClient = new TileUiClient(
+                this,
+                new ComponentName(this, MyTileService.class),
+                rootLayout
+        );
 
+        mTileUiClient.connect();
         setAddCountdownButtonOnClickListener();
 
         adapter = new CountdownsAdapter(this, getList());
         setRecyclerView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mTileUiClient.close();
     }
 
     private void openCalendar(Integer position) {
