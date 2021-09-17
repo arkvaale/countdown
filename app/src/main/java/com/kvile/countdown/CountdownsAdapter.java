@@ -1,6 +1,7 @@
 package com.kvile.countdown;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,11 @@ public class CountdownsAdapter extends RecyclerView.Adapter<CountdownsAdapter.Vi
 
         TextView dateView = holder.dateTextView;
         dateView.setText(String.valueOf(countdown.getDaysRemaining()));
+
+        if (countdown.getDaysRemaining() <= 0) {
+            textView.setTextColor(Color.GREEN);
+            dateView.setTextColor(Color.GREEN);
+        }
     }
 
     @Override
@@ -79,8 +85,8 @@ public class CountdownsAdapter extends RecyclerView.Adapter<CountdownsAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
 
-            nameTextView = (TextView) itemView.findViewById(R.id.countdown_name);
-            dateTextView = (TextView) itemView.findViewById(R.id.countdown_date);
+            nameTextView = itemView.findViewById(R.id.countdown_name);
+            dateTextView = itemView.findViewById(R.id.countdown_date);
             itemView.setOnClickListener(this);
         }
 

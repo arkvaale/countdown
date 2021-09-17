@@ -43,15 +43,15 @@ public class MainActivity extends ComponentActivity {
 
     private void openCalendar(Integer position) {
         changeContentView(R.layout.calendar);
-        EditText editText = (EditText) findViewById(R.id.countdownName);
-        DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
+        EditText editText = findViewById(R.id.countdownName);
+        DatePicker datePicker = findViewById(R.id.datePicker);
         if (position != null) {
             Countdown countdownToEdit = adapter.getCountdowns().get(position);
             editText.setText(countdownToEdit.getName());
             Calendar calendar = countdownToEdit.getCalendar();
             datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         }
-        Button saveButton = (Button) findViewById(R.id.saveButton);
+        Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, datePicker.getYear());
@@ -81,19 +81,19 @@ public class MainActivity extends ComponentActivity {
         rvCountdowns.setAdapter(adapter);
         adapter.setOnItemClickListener((position, v) -> {
             if (previousClickedView != null && v != previousClickedView) {
-                LinearLayout previousActionsLayout = (LinearLayout) previousClickedView.findViewById(R.id.actions);
+                LinearLayout previousActionsLayout = previousClickedView.findViewById(R.id.actions);
                 previousActionsLayout.setVisibility(View.GONE);
             }
             previousClickedView = v;
-            LinearLayout actionsLayout = (LinearLayout) v.findViewById(R.id.actions);
+            LinearLayout actionsLayout = v.findViewById(R.id.actions);
             if (actionsLayout.getVisibility() == View.GONE) {
                 actionsLayout.setVisibility(View.VISIBLE);
             } else {
                 actionsLayout.setVisibility(View.GONE);
             }
-            Button editButton = (Button) v.findViewById(R.id.editButton);
+            Button editButton = v.findViewById(R.id.editButton);
             editButton.setOnClickListener(b -> editCountdown(position));
-            Button deleteButton = (Button) v.findViewById(R.id.deleteButton);
+            Button deleteButton = v.findViewById(R.id.deleteButton);
             deleteButton.setOnClickListener(b -> deleteCountdown(position));
         });
     }
@@ -109,7 +109,7 @@ public class MainActivity extends ComponentActivity {
     }
 
     private void setAddCountdownButtonOnClickListener() {
-        Button addCountdownButton = (Button) findViewById(R.id.addCountdownButton);
+        Button addCountdownButton = findViewById(R.id.addCountdownButton);
         addCountdownButton.setOnClickListener(v -> openCalendar(null));
     }
 
