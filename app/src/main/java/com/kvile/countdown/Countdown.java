@@ -30,7 +30,9 @@ public class Countdown {
     }
 
     public long getDaysRemaining() {
-        return ChronoUnit.DAYS.between(Calendar.getInstance().toInstant(), getCalendar().toInstant());
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.DAY_OF_MONTH, -1);
+        return ChronoUnit.DAYS.between(now.toInstant(), getCalendar().toInstant());
     }
 
 }
