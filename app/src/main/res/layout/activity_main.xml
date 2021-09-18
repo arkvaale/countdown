@@ -26,7 +26,9 @@
             android:id="@+id/countdowns"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="50dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
     </FrameLayout>
 </androidx.wear.widget.BoxInsetLayout>
