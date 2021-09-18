@@ -9,10 +9,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.wear.widget.WearableRecyclerView;
 
+import java.util.Comparator;
 import java.util.List;
 
-public class CountdownsAdapter extends RecyclerView.Adapter<CountdownsAdapter.ViewHolder> {
+public class CountdownsAdapter extends WearableRecyclerView.Adapter<CountdownsAdapter.ViewHolder> {
 
     private static ClickListener clickListener;
     private final Context context;
@@ -38,11 +40,12 @@ public class CountdownsAdapter extends RecyclerView.Adapter<CountdownsAdapter.Vi
         textView.setText(countdown.getName());
 
         TextView dateView = holder.dateTextView;
-        dateView.setText(String.valueOf(countdown.getDaysRemaining()));
-
         if (countdown.getDaysRemaining() <= 0) {
+            dateView.setText("\u2713");
             textView.setTextColor(Color.GREEN);
             dateView.setTextColor(Color.GREEN);
+        } else {
+            dateView.setText(String.valueOf(countdown.getDaysRemaining()));
         }
     }
 
@@ -61,6 +64,7 @@ public class CountdownsAdapter extends RecyclerView.Adapter<CountdownsAdapter.Vi
 
     public void addCountdown(Countdown mCountdown) {
         this.mCountdowns.add(mCountdown);
+        this.mCountdowns.sort(Comparator.comparingLong(Countdown::getDaysRemaining));
     }
 
     public void editCountdown(Countdown mCountdown, int position) {

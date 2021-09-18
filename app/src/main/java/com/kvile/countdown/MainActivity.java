@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends ComponentActivity {
@@ -79,6 +80,7 @@ public class MainActivity extends ComponentActivity {
         rvCountdowns.setLayoutManager(new LinearLayoutManager(this));
         rvCountdowns.setHasFixedSize(true);
         rvCountdowns.setAdapter(adapter);
+        rvCountdowns.requestFocus();
         adapter.setOnItemClickListener((position, v) -> {
             if (previousClickedView != null && v != previousClickedView) {
                 LinearLayout previousActionsLayout = previousClickedView.findViewById(R.id.actions);
@@ -136,6 +138,7 @@ public class MainActivity extends ComponentActivity {
             }.getType();
             arrayItems = gson.fromJson(serializedObject, type);
         }
+        arrayItems.sort(Comparator.comparingLong(Countdown::getDaysRemaining));
         return arrayItems;
     }
 
