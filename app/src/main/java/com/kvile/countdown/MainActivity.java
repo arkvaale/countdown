@@ -55,9 +55,7 @@ public class MainActivity extends ComponentActivity {
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, datePicker.getYear());
-            cal.set(Calendar.MONTH, datePicker.getMonth());
-            cal.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
+            cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), 0, 0, 0);
             String name = StringUtils.isEmpty(editText.getText()) ? "Unnamed" : editText.getText().toString();
             save(name, cal, position);
         });
