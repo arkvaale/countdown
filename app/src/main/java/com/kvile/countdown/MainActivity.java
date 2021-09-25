@@ -46,6 +46,7 @@ public class MainActivity extends ComponentActivity {
         changeContentView(R.layout.calendar);
         EditText editText = findViewById(R.id.countdownName);
         DatePicker datePicker = findViewById(R.id.datePicker);
+        datePicker.setMinDate(System.currentTimeMillis() - 1000);
         if (position != null) {
             Countdown countdownToEdit = adapter.getCountdowns().get(position);
             editText.setText(countdownToEdit.getName());
