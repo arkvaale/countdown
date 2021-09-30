@@ -42,6 +42,14 @@ public class MainActivity extends ComponentActivity {
         setRecyclerView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        adapter = new CountdownsAdapter(this, getList());
+        setRecyclerView();
+    }
+
     private void openCalendar(Integer position) {
         changeContentView(R.layout.calendar);
         EditText editText = findViewById(R.id.countdownName);
