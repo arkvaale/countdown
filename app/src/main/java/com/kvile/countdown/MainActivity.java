@@ -46,8 +46,10 @@ public class MainActivity extends ComponentActivity {
     protected void onResume() {
         super.onResume();
 
-        adapter = new CountdownsAdapter(this, getList());
-        setRecyclerView();
+        if (currentView != R.layout.calendar) {
+            adapter = new CountdownsAdapter(this, getList());
+            setRecyclerView();
+        }
     }
 
     private void openCalendar(Integer position) {
