@@ -1,12 +1,11 @@
 package com.kvile.countdown;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.activity.ComponentActivity;
@@ -16,103 +15,76 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends ComponentActivity {
 
-    private static final String STORE_FILE_NAME = "countdowns";
-    private CountdownsAdapter adapter;
+    protected static final String STORE_FILE_NAME = "countdowns";
+    protected static final String EDIT_COUNTDOWN_POSITION = "editPosition";
+    protected CountdownsAdapter adapter;
     private View previousClickedView;
-    private int currentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        changeContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
-        setAddCountdownButtonOnClickListener();
+        findViewById(R.id.addCountdownButton).setOnClickListener(v -> openCalendar(null));
 
+        initializeRecyclerView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initializeRecyclerView();
+    }
+
+    private void initializeRecyclerView() {
         adapter = new CountdownsAdapter(this, getList());
         setRecyclerView();
     }
 
     private void openCalendar(Integer position) {
-        changeContentView(R.layout.calendar);
-        EditText editText = findViewById(R.id.countdownName);
-        DatePicker datePicker = findViewById(R.id.datePicker);
-        if (position != null) {
-            Countdown countdownToEdit = adapter.getCountdowns().get(position);
-            editText.setText(countdownToEdit.getName());
-            Calendar calendar = countdownToEdit.getCalendar();
-            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-        }
-        Button saveButton = findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(v -> {
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, datePicker.getYear());
-            cal.set(Calendar.MONTH, datePicker.getMonth());
-            cal.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
-            String name = StringUtils.isEmpty(editText.getText()) ? "Unnamed" : editText.getText().toString();
-            save(name, cal, position);
-        });
-    }
-
-    private void save(String name, Calendar cal, Integer position) {
-        if (position != null) {
-            adapter.editCountdown(new Countdown(name, cal), position);
-        } else {
-            adapter.addCountdown(new Countdown(name, cal));
-        }
-        changeContentView(R.layout.activity_main);
-        setRecyclerView();
-        setAddCountdownButtonOnClickListener();
-        setList(STORE_FILE_NAME, adapter.getCountdowns());
+        Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
+        intent.putExtra(EDIT_COUNTDOWN_POSITION, position);
+        MainActivity.this.startActivity(intent);
     }
 
     private void setRecyclerView() {
         RecyclerView rvCountdowns = this.findViewById(R.id.countdowns);
-        rvCountdowns.setLayoutManager(new LinearLayoutManager(this));
-        rvCountdowns.setHasFixedSize(true);
-        rvCountdowns.setAdapter(adapter);
-        rvCountdowns.requestFocus();
-        adapter.setOnItemClickListener((position, v) -> {
-            if (previousClickedView != null && v != previousClickedView) {
-                LinearLayout previousActionsLayout = previousClickedView.findViewById(R.id.actions);
-                previousActionsLayout.setVisibility(View.GONE);
-            }
-            previousClickedView = v;
-            LinearLayout actionsLayout = v.findViewById(R.id.actions);
-            if (actionsLayout.getVisibility() == View.GONE) {
-                actionsLayout.setVisibility(View.VISIBLE);
-            } else {
-                actionsLayout.setVisibility(View.GONE);
-            }
-            Button editButton = v.findViewById(R.id.editButton);
-            editButton.setOnClickListener(b -> editCountdown(position));
-            Button deleteButton = v.findViewById(R.id.deleteButton);
-            deleteButton.setOnClickListener(b -> deleteCountdown(position));
-        });
-    }
-
-    private void editCountdown(int position) {
-        openCalendar(position);
+        if (rvCountdowns != null) {
+            rvCountdowns.setLayoutManager(new LinearLayoutManager(this));
+            rvCountdowns.setHasFixedSize(true);
+            rvCountdowns.setAdapter(adapter);
+            rvCountdowns.requestFocus();
+            adapter.setOnItemClickListener((position, v) -> {
+                if (previousClickedView != null && v != previousClickedView) {
+                    LinearLayout previousActionsLayout = previousClickedView.findViewById(R.id.actions);
+                    previousActionsLayout.setVisibility(View.GONE);
+                }
+                previousClickedView = v;
+                LinearLayout actionsLayout = v.findViewById(R.id.actions);
+                if (actionsLayout.getVisibility() == View.GONE) {
+                    actionsLayout.setVisibility(View.VISIBLE);
+                } else {
+                    actionsLayout.setVisibility(View.GONE);
+                }
+                Button editButton = v.findViewById(R.id.editButton);
+                editButton.setOnClickListener(b -> openCalendar(position));
+                Button deleteButton = v.findViewById(R.id.deleteButton);
+                deleteButton.setOnClickListener(b -> deleteCountdown(position));
+            });
+        }
     }
 
     private void deleteCountdown(int position) {
         adapter.deleteCountdown(position);
         adapter.notifyItemRemoved(position);
         setList(STORE_FILE_NAME, adapter.getCountdowns());
-    }
-
-    private void setAddCountdownButtonOnClickListener() {
-        Button addCountdownButton = findViewById(R.id.addCountdownButton);
-        addCountdownButton.setOnClickListener(v -> openCalendar(null));
     }
 
     public <T> void setList(String key, List<T> list) {
@@ -142,19 +114,4 @@ public class MainActivity extends ComponentActivity {
         return arrayItems;
     }
 
-    private void changeContentView(int id) {
-        setContentView(id);
-        currentView = id;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (currentView == R.layout.calendar) {
-            changeContentView(R.layout.activity_main);
-            setRecyclerView();
-            setAddCountdownButtonOnClickListener();
-        } else {
-            super.onBackPressed();
-        }
-    }
 }
