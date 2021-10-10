@@ -1,4 +1,4 @@
-package com.kvile.countdown;
+package com.kvile.countdown.common;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
