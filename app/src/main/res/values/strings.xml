@@ -9,4 +9,6 @@
     <string name="delete">Delete</string>
     <string name="name">Name</string>
     <string name="add">Add</string>
+    <string name="tile_label">Countdown tile</string>
+    <string name="tile_description">Displays the first 3 countdowns</string>
 </resources>

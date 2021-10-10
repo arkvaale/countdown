@@ -1,8 +1,8 @@
 package com.kvile.countdown;
 
-import android.content.Context;
+import static com.kvile.countdown.common.CountdownDataApplication.STORE_FILE_NAME;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,18 +12,14 @@ import androidx.activity.ComponentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import com.kvile.countdown.calendar.CalendarActivity;
+import com.kvile.countdown.common.CountdownDataApplication;
+import com.kvile.countdown.common.CountdownsAdapter;
 
 public class MainActivity extends ComponentActivity {
 
-    protected static final String STORE_FILE_NAME = "countdowns";
     protected static final String EDIT_COUNTDOWN_POSITION = "editPosition";
+    protected final CountdownDataApplication countdownDataApplication = new CountdownDataApplication(this);
     protected CountdownsAdapter adapter;
     private View previousClickedView;
 
@@ -44,7 +40,7 @@ public class MainActivity extends ComponentActivity {
     }
 
     private void initializeRecyclerView() {
-        adapter = new CountdownsAdapter(this, getList());
+        adapter = new CountdownsAdapter(this, countdownDataApplication.getList());
         setRecyclerView();
     }
 
@@ -84,34 +80,7 @@ public class MainActivity extends ComponentActivity {
     private void deleteCountdown(int position) {
         adapter.deleteCountdown(position);
         adapter.notifyItemRemoved(position);
-        setList(STORE_FILE_NAME, adapter.getCountdowns());
-    }
-
-    public <T> void setList(String key, List<T> list) {
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        set(key, json);
-    }
-
-    public void set(String key, String value) {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(STORE_FILE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(key, value);
-        editor.apply();
-    }
-
-    public List<Countdown> getList() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(STORE_FILE_NAME, Context.MODE_PRIVATE);
-        List<Countdown> arrayItems = new ArrayList<>();
-        String serializedObject = sharedPreferences.getString(STORE_FILE_NAME, null);
-        if (serializedObject != null) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Countdown>>() {
-            }.getType();
-            arrayItems = gson.fromJson(serializedObject, type);
-        }
-        arrayItems.sort(Comparator.comparingLong(Countdown::getDaysRemaining));
-        return arrayItems;
+        countdownDataApplication.setList(STORE_FILE_NAME, adapter.getCountdowns());
     }
 
 }
