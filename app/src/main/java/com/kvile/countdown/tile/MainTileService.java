@@ -58,6 +58,7 @@ public class MainTileService extends TileService {
             layoutColumn.addContent(getTextLayoutRow("Click here to add in the app"));
             layoutColumn.addContent(getTextLayoutRow("in the app."));
         }
+        layoutColumn.addContent(getRefreshTileElement());
 
         timeline.addTimelineEntry(new TimelineBuilders.TimelineEntry.Builder()
                 .setLayout(new LayoutElementBuilders.Layout.Builder()
@@ -116,6 +117,18 @@ public class MainTileService extends TileService {
                         .setAndroidActivity(new ActionBuilders.AndroidActivity.Builder()
                                 .setClassName(MainActivity.class.getName())
                                 .setPackageName(this.getPackageName())
+                                .build()
+                        ).build()
+                ).build();
+    }
+
+    private LayoutElementBuilders.LayoutElement getRefreshTileElement() {
+        return new LayoutElementBuilders.Text.Builder()
+                .setText("\u21bb")
+                .setModifiers(new ModifiersBuilders.Modifiers.Builder()
+                        .setClickable(new ModifiersBuilders.Clickable.Builder()
+                                .setId("refreshTile")
+                                .setOnClick(new ActionBuilders.LoadAction.Builder().build())
                                 .build()
                         ).build()
                 ).build();
