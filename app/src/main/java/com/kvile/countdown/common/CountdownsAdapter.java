@@ -1,4 +1,4 @@
-package com.kvile.countdown;
+package com.kvile.countdown.common;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableRecyclerView;
+
+import com.kvile.countdown.R;
 
 import java.util.Comparator;
 import java.util.List;

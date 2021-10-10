@@ -1,10 +1,16 @@
-package com.kvile.countdown;
+package com.kvile.countdown.calendar;
+
+import static com.kvile.countdown.common.CountdownDataApplication.STORE_FILE_NAME;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
+import com.kvile.countdown.MainActivity;
+import com.kvile.countdown.R;
+import com.kvile.countdown.common.Countdown;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,7 +50,7 @@ public class CalendarActivity extends MainActivity {
         } else {
             adapter.addCountdown(new Countdown(name, cal));
         }
-        setList(STORE_FILE_NAME, adapter.getCountdowns());
+        countdownDataApplication.setList(STORE_FILE_NAME, adapter.getCountdowns());
         Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
         CalendarActivity.this.startActivity(intent);
     }
