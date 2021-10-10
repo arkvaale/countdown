@@ -27,6 +27,10 @@ public class CountdownsAdapter extends WearableRecyclerView.Adapter<CountdownsAd
         mCountdowns = countdowns;
     }
 
+    public static int getTextColor(long daysRemaining) {
+        return daysRemaining <= 0 ? Color.GREEN : Color.WHITE;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -37,18 +41,15 @@ public class CountdownsAdapter extends WearableRecyclerView.Adapter<CountdownsAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Countdown countdown = mCountdowns.get(position);
+        long daysRemaining = countdown.getDaysRemaining();
 
         TextView textView = holder.nameTextView;
         textView.setText(countdown.getName());
+        textView.setTextColor(getTextColor(daysRemaining));
 
         TextView dateView = holder.dateTextView;
-        if (countdown.getDaysRemaining() <= 0) {
-            dateView.setText("\u2713");
-            textView.setTextColor(Color.GREEN);
-            dateView.setTextColor(Color.GREEN);
-        } else {
-            dateView.setText(String.valueOf(countdown.getDaysRemaining()));
-        }
+        dateView.setText(daysRemaining <= 0 ? "\u2713" : String.valueOf(daysRemaining));
+        dateView.setTextColor(getTextColor(daysRemaining));
     }
 
     @Override
