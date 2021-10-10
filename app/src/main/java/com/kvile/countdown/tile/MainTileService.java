@@ -73,6 +73,7 @@ public class MainTileService extends TileService {
 
         TileBuilders.Tile tile = new TileBuilders.Tile.Builder()
                 .setResourcesVersion(RESOURCES_VERSION)
+                .setFreshnessIntervalMillis(6 * 60 * 60 * 1000) // 6 hours
                 .setTimeline(timeline.build())
                 .build();
         return Futures.immediateFuture(tile);
