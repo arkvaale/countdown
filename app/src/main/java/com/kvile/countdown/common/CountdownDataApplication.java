@@ -3,8 +3,11 @@ package com.kvile.countdown.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.wear.tiles.TileService;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kvile.countdown.tile.MainTileService;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class CountdownDataApplication {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         set(key, json);
+        TileService.getUpdater(context).requestUpdate(MainTileService.class);
     }
 
     public void set(String key, String value) {

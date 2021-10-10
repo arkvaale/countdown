@@ -4,8 +4,7 @@ import static androidx.wear.tiles.DimensionBuilders.dp;
 import static androidx.wear.tiles.DimensionBuilders.expand;
 import static androidx.wear.tiles.DimensionBuilders.sp;
 import static androidx.wear.tiles.DimensionBuilders.wrap;
-
-import android.graphics.Color;
+import static com.kvile.countdown.common.CountdownsAdapter.getTextColor;
 
 import androidx.annotation.NonNull;
 import androidx.wear.tiles.ActionBuilders;
@@ -41,13 +40,13 @@ public class MainTileService extends TileService {
                 .setWidth(wrap())
                 .setHeight(expand())
                 .setModifiers(new ModifiersBuilders.Modifiers.Builder()
-                        .setClickable(getClickable())
+                        .setClickable(getOpenMainActivityClickable())
                         .setSemantics(new ModifiersBuilders.Semantics.Builder()
                                 .setContentDescription("List of countdowns")
                                 .build())
                         .setPadding(new ModifiersBuilders.Padding.Builder()
-                                .setTop(dp(5f))
-                                .setBottom(dp(5f))
+                                .setTop(dp(8f))
+                                .setBottom(dp(8f))
                                 .build())
                         .build())
                 .build();
@@ -60,14 +59,12 @@ public class MainTileService extends TileService {
         } else {
             layoutColumn.addContent(getTextLayoutRow("No countdowns"));
             layoutColumn.addContent(getTextLayoutRow("to be displayed."));
-            layoutColumn.addContent(getTextLayoutRow("Click here to add in the app"));
+            layoutColumn.addContent(getTextLayoutRow("Click here to add"));
             layoutColumn.addContent(getTextLayoutRow("in the app."));
         }
-        layoutColumn.addContent(new LayoutElementBuilders.Spacer.Builder()
-                .setHeight(dp(10f))
-                .build());
+        layoutColumn.addContent(getHeightSpacer(10f));
         layoutColumn.addContent(getRefreshTileElement());
-
+        layoutColumn.addContent(getHeightSpacer(5f));
         timeline.addTimelineEntry(new TimelineBuilders.TimelineEntry.Builder()
                 .setLayout(new LayoutElementBuilders.Layout.Builder()
                         .setRoot(layoutColumn.build())
@@ -76,6 +73,7 @@ public class MainTileService extends TileService {
 
         TileBuilders.Tile tile = new TileBuilders.Tile.Builder()
                 .setResourcesVersion(RESOURCES_VERSION)
+                .setFreshnessIntervalMillis(6 * 60 * 60 * 1000) // 6 hours
                 .setTimeline(timeline.build())
                 .build();
         return Futures.immediateFuture(tile);
@@ -87,8 +85,8 @@ public class MainTileService extends TileService {
                 .setHeight(expand())
                 .addContent(new LayoutElementBuilders.Text.Builder()
                         .setText(text)
-                        .build()
-                ).build();
+                        .build())
+                .build();
     }
 
     private LayoutElementBuilders.LayoutElement getCountdownLayout(Countdown countdown) {
@@ -115,36 +113,41 @@ public class MainTileService extends TileService {
                                         .setArgb(getTextColor(countdown.getDaysRemaining()))
                                         .build())
                                 .build())
-                        .build()
-                ).build();
+                        .build())
+                .build();
     }
 
-    private int getTextColor(long daysRemaining) {
-        return daysRemaining <= 0 ? Color.GREEN : Color.WHITE;
+    private LayoutElementBuilders.Spacer getHeightSpacer(float size) {
+        return new LayoutElementBuilders.Spacer.Builder()
+                .setHeight(dp(size))
+                .build();
     }
 
-    private ModifiersBuilders.Clickable getClickable() {
+    private ModifiersBuilders.Clickable getOpenMainActivityClickable() {
         return new ModifiersBuilders.Clickable.Builder()
                 .setId("openMainActivity")
                 .setOnClick(new ActionBuilders.LaunchAction.Builder()
                         .setAndroidActivity(new ActionBuilders.AndroidActivity.Builder()
                                 .setClassName(MainActivity.class.getName())
                                 .setPackageName(this.getPackageName())
-                                .build()
-                        ).build()
-                ).build();
+                                .build())
+                        .build())
+                .build();
     }
 
     private LayoutElementBuilders.LayoutElement getRefreshTileElement() {
         return new LayoutElementBuilders.Text.Builder()
                 .setText("\u21bb")
+                .setFontStyle(new LayoutElementBuilders.FontStyle.Builder()
+                        .setSize(sp(25))
+                        .build())
                 .setModifiers(new ModifiersBuilders.Modifiers.Builder()
                         .setClickable(new ModifiersBuilders.Clickable.Builder()
                                 .setId("refreshTile")
                                 .setOnClick(new ActionBuilders.LoadAction.Builder().build())
-                                .build()
-                        ).build()
-                ).build();
+                                .build())
+                        .build())
+                .build();
     }
 
     @NonNull
