@@ -2,6 +2,7 @@ package com.kvile.countdown.tile;
 
 import static androidx.wear.tiles.DimensionBuilders.dp;
 import static androidx.wear.tiles.DimensionBuilders.expand;
+import static androidx.wear.tiles.DimensionBuilders.sp;
 import static androidx.wear.tiles.DimensionBuilders.wrap;
 
 import android.graphics.Color;
@@ -44,6 +45,10 @@ public class MainTileService extends TileService {
                         .setSemantics(new ModifiersBuilders.Semantics.Builder()
                                 .setContentDescription("List of countdowns")
                                 .build())
+                        .setPadding(new ModifiersBuilders.Padding.Builder()
+                                .setTop(dp(5f))
+                                .setBottom(dp(5f))
+                                .build())
                         .build())
                 .build();
         List<Countdown> countdowns = countdownDataApplication.getList();
@@ -58,6 +63,9 @@ public class MainTileService extends TileService {
             layoutColumn.addContent(getTextLayoutRow("Click here to add in the app"));
             layoutColumn.addContent(getTextLayoutRow("in the app."));
         }
+        layoutColumn.addContent(new LayoutElementBuilders.Spacer.Builder()
+                .setHeight(dp(10f))
+                .build());
         layoutColumn.addContent(getRefreshTileElement());
 
         timeline.addTimelineEntry(new TimelineBuilders.TimelineEntry.Builder()
@@ -91,8 +99,9 @@ public class MainTileService extends TileService {
                         .setText(countdown.getName())
                         .setFontStyle(new LayoutElementBuilders.FontStyle.Builder()
                                 .setColor(new ColorBuilders.ColorProp.Builder()
-                                        .setArgb(countdown.getDaysRemaining() <= 0 ? Color.GREEN : Color.WHITE)
+                                        .setArgb(getTextColor(countdown.getDaysRemaining()))
                                         .build())
+                                .setSize(sp(16))
                                 .build())
                         .build()
                 )
@@ -103,11 +112,15 @@ public class MainTileService extends TileService {
                         .setText(countdown.getDaysRemaining() <= 0 ? "\u2713" : String.valueOf(countdown.getDaysRemaining()))
                         .setFontStyle(new LayoutElementBuilders.FontStyle.Builder()
                                 .setColor(new ColorBuilders.ColorProp.Builder()
-                                        .setArgb(countdown.getDaysRemaining() <= 0 ? Color.GREEN : Color.WHITE)
+                                        .setArgb(getTextColor(countdown.getDaysRemaining()))
                                         .build())
                                 .build())
                         .build()
                 ).build();
+    }
+
+    private int getTextColor(long daysRemaining) {
+        return daysRemaining <= 0 ? Color.GREEN : Color.WHITE;
     }
 
     private ModifiersBuilders.Clickable getClickable() {
